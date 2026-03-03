@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+ <meta charset="utf-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <meta name="theme-color" content="#21808d">
+
+ <title>Calculators</title>
+ <style>
+  :root {
+   --color-bg-primary: #fcfcf9;
+   --color-surface: #fffffd;
+   --color-text-primary: #133433;
+   --color-text-secondary: #626c71;
+   --color-primary: #21808d;
+   --color-primary-hover: #1d7480;
+   --color-border: rgba(94,82,64,0.2);
+   --color-secondary: rgba(94,82,64,0.12);
+   --color-secondary-hover: rgba(94,82,64,0.2);
+   --radius-base: 8px;
+   --radius-lg: 12px;
+   --space-8: 8px;
+   --space-12: 12px;
+   --space-16: 16px;
+   --space-24: 24px;
+  }
+  @media (prefers-color-scheme: dark) {
+   :root {
+    --color-bg-primary: #1f2121;
+    --color-surface: #262828;
+    --color-text-primary: #f5f5f5;
+    --color-text-secondary: rgba(167,169,169,0.7);
+    --color-primary: #32b8c6;
+    --color-primary-hover: #2da6b2;
+    --color-border: rgba(119,124,124,0.3);
+    --color-secondary: rgba(119,124,124,0.15);
+    --color-secondary-hover: rgba(119,124,124,0.25);
+   }
+  }
+  body {
+   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+   margin: 0;
+   padding: var(--space-24);
+   background: var(--color-bg-primary);
+   color: var(--color-text-primary);
+   max-width: 980px;
+  }
+  .tabs {
+   display: flex;
+   gap: var(--space-8);
+   margin-bottom: var(--space-16);
+  }
+  .tab {
+   padding: var(--space-8) var(--space-12);
+   border: 1px solid var(--color-border);
+   background: var(--color-secondary);
+   cursor: pointer;
+   border-radius: var(--radius-base);
+   color: var(--color-text-primary);
+   font-weight: 500;
+   transition: background 0.2s;
+  }
+  .tab:hover {
+   background: var(--color-secondary-hover);
+  }
+  .tab.active {
+   background: var(--color-primary);
+   color: #fff;
+   border-color: var(--color-primary);
+  }
+  .panel {
+   display: none;
+   border: 1px solid var(--color-border);
+   border-radius: var(--radius-lg);
+   padding: var(--space-16);
+   background: var(--color-surface);
+  }
+  .panel.active {
+   display: block;
+  }
+  h1 {
+   font-size: 30px;
+   margin: 0 0 var(--space-8) 0;
+  }
+  h2 {
+   font-size: 24px;
+   margin: 0 0 var(--space-16) 0;
+  }
+  h3 {
+   font-size: 18px;
+   margin: var(--space-24) 0 var(--space-12) 0;
+  }
+  .subtitle {
+   color: var(--color-text-secondary);
+   font-size: 14px;
+   margin-bottom: var(--space-24);
+  }
+  .grid {
+   display: grid;
+   grid-template-columns: 280px 1fr;
+   gap: 10px;
+   align-items: center;
+   max-width: 720px;
+  }
+  label {
+   font-size: 14px;
+   font-weight: 500;
+  }
+  input, select {
+   padding: var(--space-8) var(--space-12);
+   border: 1px solid var(--color-border);
+   border-radius: var(--radius-base);
+   width: 100%;
+   font-size: 14px;
+   background: var(--color-bg-primary);
+   color: var(--color-text-primary);
+  }
+  input:focus, select:focus {
+   outline: 2px solid var(--color-primary);
+   border-color: var(--color-primary);
+  }
+  .btns {
+   display: flex;
+   gap: 10px;
+   margin-top: var(--space-16);
+  }
+  button {
+   padding: var(--space-8) var(--space-16);
+   border: 1px solid var(--color-border);
+   border-radius: var(--radius-base);
+   background: var(--color-secondary);
+   color: var(--color-text-primary);
+   cursor: pointer;
+   font-weight: 500;
+   transition: background 0.2s;
+  }
+  button:hover {
+   background: var(--color-secondary-hover);
+  }
+  button:active {
+   background: var(--color-primary);
+   color: #fff;
+  }
+  .out {
+   font-variant-numeric: tabular-nums;
+  }
+  .out-value {
+   font-weight: 500;
+   font-size: 15px;
+  }
+  .small {
+   color: var(--color-text-secondary);
+   font-size: 13px;
+   line-height: 1.5;
+   margin-top: var(--space-16);
+  }
+  .note {
+   background: var(--color-secondary);
+   padding: var(--space-12);
+   border-radius: var(--radius-base);
+   font-size: 13px;
+   margin-bottom: var(--space-16);
+   color: var(--color-text-secondary);
+  }
+ </style>
+</head>
+<body>
+
+<h1>Calculators</h1>
+<p class="subtitle">Created by Zach Likens</p>
+
+<div class="tabs">
+ <button class="tab active" data-tab="margin">Margin Calculator</button>
+ <button class="tab" data-tab="weight">Weight Calculator</button>
+  <button class="tab" data-tab="cut-planner">Cut Planner</button>
+</div>
+
+<section id="margin" class="panel active">
+ <h2>Margin Calculator</h2>
+ <p class="note">Enter any TWO values below (or more to override). Margin can be entered as 40 for 40%.</p>
+
+ <h3>Inputs</h3>
+ <div class="grid">
+  <label for="m_cost">Cost (COGS)</label>
+  <input id="m_cost" type="number" step="any" />
+
+  <label for="m_rev">Revenue (Sales Price)</label>
+  <input id="m_rev" type="number" step="any" />
+
+  <label for="m_profit">Profit</label>
+  <input id="m_profit" type="number" step="any" placeholder="Optional override" />
+
+  <label for="m_margin">Margin %</label>
+  <input id="m_margin" type="number" step="any" placeholder="Optional override" />
+ </div>
+
+ <div class="btns">
+  <button id="m_clear">Clear fields</button>
+ </div>
+
+ <h3>Calculated Results (Live Update)</h3>
+ <div class="grid out">
+  <div>Cost</div>
+  <div class="out-value" id="o_cost">—</div>
+
+  <div>Revenue</div>
+  <div class="out-value" id="o_rev">—</div>
+
+  <div>Profit</div>
+  <div class="out-value" id="o_profit">—</div>
+
+  <div>Margin %</div>
+  <div class="out-value" id="o_margin">—</div>
+
+  <div>Markup %</div>
+  <div class="out-value" id="o_markup">—</div>
+ </div>
+
+ <p class="small">Excel formulas replicated: B11-B15 from Margin Calculator sheet</p>
+</section>
+
+<section id="weight" class="panel">
+ <h2>Plastic Weight Calculator</h2>
+
+ <h3>Configuration</h3>
+ <div class="grid">
+  <label for="w_units">Units mode</label>
+  <select id="w_units">
+   <option value="Imperial">Imperial</option>
+   <option value="Metric">Metric</option>
+  </select>
+
+  <label for="w_shape">Shape</label>
+  <select id="w_shape">
+   <option value="Sheet/Bar">Sheet/Bar</option>
+   <option value="Rod">Rod</option>
+   <option value="Round Tube">Round Tube</option>
+   <option value="Square Tube">Square Tube</option>
+  </select>
+
+  <label for="w_material">Material</label>
+  <select id="w_material"></select>
+ </div>
+
+ <h3>Dimensions</h3>
+ <div class="grid">
+  <label for="w_t">Thickness / Wall <span id="w_t_unit">IN</span></label>
+  <input id="w_t" type="number" step="any" value="2" />
+
+  <label for="w_w">Width / OD / Outer size <span id="w_w_unit">IN</span></label>
+  <input id="w_w" type="number" step="any" value="48" />
+
+  <label for="w_l">Length <span id="w_l_unit">IN</span></label>
+  <input id="w_l" type="number" step="any" value="96" />
+ </div>
+
+ <div class="btns">
+  <button id="w_clear">Clear fields</button>
+ </div>
+
+ <h3>Results</h3>
+ <div class="grid out">
+  <div>Weight</div>
+  <div class="out-value" id="o_weight">—</div>
+
+  <div>Density (imperial lb/in³)</div>
+  <div class="out-value" id="o_d_lb">—</div>
+
+  <div>Density (metric kg/mm³)</div>
+  <div class="out-value" id="o_d_kg">—</div>
+
+  <div>Density used</div>
+  <div class="out-value" id="o_d_used">—</div>
+
+  <div>Volume used</div>
+  <div class="out-value" id="o_vol">—</div>
+ </div>
+
+ <p class="small">Excel formulas replicated: B11, B13-B22 from Weight Calculator sheet</p>
+
+<section id="cut-planner" class="panel">
+  <h2>Cut Planner</h2>
+  <p class="note">Select one or more stock sheet sizes, set kerf and grain, then enter part sizes and quantities. Planner will estimate parts per sheet, sheets required, and yield.</p>
+
+  <h3>Stock sheets</h3>
+  <div class="grid">
+    <label>Available stock sizes (IN)</label>
+    <div>
+      <label><input type="checkbox" class="cp-stock" data-w="48" data-l="96" checked> 48 × 96</label><br>
+      <label><input type="checkbox" class="cp-stock" data-w="60" data-l="96"> 60 × 96</label><br>
+      <label><input type="checkbox" class="cp-stock" data-w="60" data-l="120"> 60 × 120</label><br>
+      <label><input type="checkbox" class="cp-stock" data-w="72" data-l="144"> 72 × 144</label>
+    </div>
+
+    <label for="cp_custom_w">Custom sheet size (IN)</label>
+    <div>
+      <input id="cp_custom_w" type="number" step="any" placeholder="Width" style="max-width:120px;"> ×
+      <input id="cp_custom_l" type="number" step="any" placeholder="Length" style="max-width:120px;">
+      <label style="display:block;margin-top:6px;"><input type="checkbox" id="cp_custom_enable"> Include custom size</label>
+    </div>
+
+    <label for="cp_kerf">Kerf (saw width, IN)</label>
+    <input id="cp_kerf" type="number" step="any" value="0.125" />
+
+    <label for="cp_grain">Grain rule</label>
+    <select id="cp_grain">
+      <option value="rotate">Rotation allowed (ignore grain)</option>
+      <option value="nograin">Follow grain (no rotation)</option>
+    </select>
+  </div>
+
+  <h3>Parts</h3>
+  <div class="small">All dimensions in IN to match your existing calculators.</div>
+  <table id="cp_parts" style="width:100%;margin-top:12px;border-collapse:collapse;font-size:14px;">
+    <thead>
+      <tr>
+        <th style="text-align:left;border-bottom:1px solid rgba(0,0,0,0.15);padding:4px 6px;">Part</th>
+        <th style="text-align:right;border-bottom:1px solid rgba(0,0,0,0.15);padding:4px 6px;">Width</th>
+        <th style="text-align:right;border-bottom:1px solid rgba(0,0,0,0.15);padding:4px 6px;">Length</th>
+        <th style="text-align:right;border-bottom:1px solid rgba(0,0,0,0.15);padding:4px 6px;">Qty</th>
+        <th style="border-bottom:1px solid rgba(0,0,0,0.15);padding:4px 6px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div class="btns" style="margin-top:8px;">
+    <button id="cp_add_part">Add part</button>
+    <button id="cp_clear_parts">Clear parts</button>
+  </div>
+
+  <h3>Results</h3>
+  <div class="small">Planner evaluates each selected sheet size separately. You can see sheets required, yield %, and waste % per sheet size and choose what to run.</div>
+  <div id="cp_results" class="small" style="margin-top:8px;">No parts entered yet.</div>
+</section>
+
+
+<script src="materials.js"></script>
+<script src="app.js"></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js');
+    });
+  }
+</script>
+
+</body>
+</html>
